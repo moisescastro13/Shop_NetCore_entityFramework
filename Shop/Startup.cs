@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Common;
 using Models.Entities;
+using Services.Products;
 using Services.User;
 
 namespace Shop
@@ -58,7 +59,10 @@ namespace Shop
                 });
             
             services.AddDbContext<ShopContext>(options => options.UseNpgsql(Configuration.GetConnectionString("ShopConnection")));
+            
             services.AddScoped<IUserService,UserService>();
+            services.AddScoped<IProductService, ProductService>();
+            
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Shop", Version = "v1"}); });
         }
 

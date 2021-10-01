@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
+using Models.Request;
+using Models.Respose;
 
 namespace Shop.Controllers
 {
@@ -12,14 +14,11 @@ namespace Shop.Controllers
     [ApiController]
     public class VentaController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult getAll()
+        [HttpPost]
+        public IActionResult Add(VentaDto ventaDto)
         {
-            using (ShopContext db = new ShopContext())
-            {
-                var result = db.Venta.ToList();
-            return Ok(result);
-            }
+            Status status =new Status();
+            return Ok(status);
         }
     }
 }

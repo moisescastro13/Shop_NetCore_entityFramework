@@ -20,18 +20,42 @@ namespace Shop.Controllers
         {
             _userService = userService;
         }
-        // GET: api/User
-        // [HttpGet]
-        // public IActionResult Get()
-        // {
-        //    
-        // }
+        
+        [HttpGet]
+        public IActionResult Get()
+        {
+            Status respose = new Status();
+            var users = _userService.GetAll();
+            if (users == null)
+            {
+                respose.Message = "Error";
+                return BadRequest(respose);
+            }
+            respose.Exito = 1;
+            respose.Data = users;
+            return Ok(respose);
+        }
 
-        [HttpPost("signin")]
+        [HttpPost("auth/signin")]
         public IActionResult SignIn([FromBody] SignInDto body)
         {
             Status respose = new Status();
             var result = _userService.SignIn(body);
+            if (result == null)
+            {
+                respose.Message = "User or password incorrect";
+                return BadRequest(respose);
+            }
+            respose.Exito = 1;
+            respose.Data = result;
+            return Ok(respose);
+        }
+        
+        [HttpPost("auth/signup")]
+        public IActionResult SignUp([FromBody] SignUpDto body)
+        {
+            Status respose = new Status();
+            var result = _userService.SignUp(body);
             if (result == null)
             {
                 respose.Message = "User or password incorrect";

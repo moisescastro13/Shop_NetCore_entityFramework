@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
@@ -35,10 +38,35 @@ namespace Services.User
 
         public LoginResponse SignUp(SignUpDto credential)
         {
-            //var newUser = _dbContext.Users.Add();
-            throw new NotImplementedException();
+            LoginResponse response = new LoginResponse();
+            Users newUser = new Users();
+            
+            var password = Encrypt.GetSha256(credential.Password);
+            var userExist = UserExist(credential.Email);
+            if (userExist != null) throw new HttpRequestException(HttpStatusCode.Conflict.ToString());
+            
+            newUser.Name = credential.Name;
+            newUser.Email = credential.Email;
+            newUser.Password = password;
+            var user = _dbContext.Users.Add(newUser);
+            _dbContext.SaveChanges();
+            
+            response.Email = newUser.Email;
+            response.Token = GetToken(newUser);
+            return response;
         }
 
+        public List<Users> GetAll()
+        {
+            var users = _dbContext.Users.ToList();
+            return users;
+        }
+
+        private Users UserExist(string email)
+        {
+            var userExist = _dbContext.Users.FirstOrDefault(d => d.Email == email);
+            return userExist;
+        }
         private string GetToken(Users payload)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
